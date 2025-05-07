@@ -1,0 +1,127 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>HTML Test File</title>
+        <link rel="stylesheet" href="style.css">
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    </head>
+    <style>
+        h1{
+            color: blue;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+        section{
+            margin: 30px;
+        }
+    </style>
+    <body>
+        <!-- <h1>H1 tag</h1>
+        <p>The HTML page structure contains elements like head, body etc that are  used to build the blocks of the web pages. </p>
+        <h2>H2 tag</h2>
+        <a href="./about.html">Redirect text</a>
+        <button type="button">Click Me</button> -->
+        <header>
+            <nav>
+                <ul>
+                    <li><a href="/">
+                        <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 15L12 18" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round"/>
+                            <path d="M22 12.2039V13.725C22 17.6258 22 19.5763 20.8284 20.7881C19.6569 22 17.7712 22 14 22H10C6.22876 22 4.34315 22 3.17157 20.7881C2 19.5763 2 17.6258 2 13.725V12.2039C2 9.91549 2 8.77128 2.5192 7.82274C3.0384 6.87421 3.98695 6.28551 5.88403 5.10813L7.88403 3.86687C9.88939 2.62229 10.8921 2 12 2C13.1079 2 14.1106 2.62229 16.116 3.86687L18.116 5.10812C20.0131 6.28551 20.9616 6.87421 21.4808 7.82274" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        Home
+                    </a></li>
+                    <li><a href="./about.html">About Us</a></li>
+                    <li><a href="./product.html"></a>Products</li>
+                    <li><a href="./services.html"></a>Services</li>
+                    <li>Contact Us</li>
+                </ul>
+            </nav>
+        </header>
+        <main>
+            <h1> About Us</h1>
+            <p>We specialize in creating innnovative solutions ....</p>
+            <p> Sales in the year 2025 have increased by <mark>25%</mark> exceeding our expectations </p>
+
+            <article>
+                <h1>Our Mission & Vision</h1>
+                <section>
+                    <h1>Our Mission</h1>
+                    <p>Building the future a single line of code at a time</p>
+                </section>
+
+                <section>
+                    <h1>Our Vision</h1>
+                    <p>World leading software solutions architects </p>
+                </section>
+            </article>
+
+            <details>
+                <summary>Click to view our working hours</summary>
+                <p>Monday - Friday <time> 9:00 -17:00</time></p>
+                <p>Weekends - 9 a.m - 1p.m</p>
+                <p>Public Holidays - <time datetime="2025-05-07T09:00:00">May 7 at 9 AM</time></p>
+            </details>
+            <section>
+                <label for="OS"> Choose your prefereed OS</label>
+                <input list="os" id="OS" name="OS">
+                <datalist id="os">
+                    <option value="Mint">
+                    <option value="Fedora"></option>
+                    <option value="Ubuntu"></option>
+                    <option value="Kali"></option>
+                    <option value="Arch"></option>
+                    <option value="Windows"></option>
+                </datalist>
+            </section>
+
+            <section>
+                <form action="/register" method="post">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username">
+                    <!-- <keygen name="security" challenge="challenge string" keytype="RSA"> -->
+                    <input type="submit" value="Register">
+                </form>
+            </section>
+
+            <section>
+                <form oninput="result.value=parseInt(a.value) + parseInt(b.value)">
+                    <input type="range" id="a" value="50"> +
+                    <input type="number" id="b" name="b" value="50"> =
+                    <output name="result" for="a b">100</output>
+                </form>
+            </section>
+
+            <section>
+               <p> Downloading: <progress id="download" max="100" value="50">50%</progress> </p>
+                </section>
+
+
+                <section>
+                    <canvas id="canvas" width="200" height="100">
+
+                    </canvas>
+                    </section>
+
+                <audio controls>
+                    <source src="./Mustard - Ballin’ ft. Roddy Ricch.webm">
+                    <source src="song.mp3">
+                    <source src="song22.mp3">
+                </audio>
+
+                <video controls width="330" height="250">
+                    <source src="video.mp4" type="video/mp4">
+                    <source src="video2.mp4" type="video/mp4">
+                    <track src="subtitle.srt" kind="subtitles" srclang="en" label="English">
+                    <source src="video1.mp4" type="video/mp4">
+                    Your browser does not support video
+                </video>
+
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/qE7sjoy7EIo?si=wQovjmZ3rj4X4JGV" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </main>
+        <footer>Copyright Info</footer>
+    </body>
+    <script src="script.js">
+
+    </script>
+</html>
+
