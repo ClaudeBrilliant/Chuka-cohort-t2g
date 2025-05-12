@@ -1,0 +1,95 @@
+body{
+    font-family: cursive;
+    background-color: bisque;
+    /* background-image: url('jigsaw.jpg'); */
+}
+
+
+
+h1, h2, p{
+
+
+}
+
+#header1{
+    font-size: 3pc;
+    word-spacing: 3mm;
+    letter-spacing: 0.2in;
+
+    color: #299248;
+
+
+}
+
+#header2{
+    font-family: monospace;
+    font-style: oblique;
+        font-variant: small-caps;
+    font-weight: 800;
+    /* font-size: medium; */
+
+    color: #928229;
+    text-decoration: line-through;
+    /* direction: rtl; */
+    text-align: center;
+    text-transform: uppercase;
+    /* text-shadow: rgb(40, 45, 49); */
+
+
+
+}
+
+img{
+    width: 150px;
+    height: 152px;
+    /* -moz-opacity: 80%; */
+    opacity: 50%;
+cursor:pointer;
+    
+}
+
+.text{
+    
+
+}
+
+table{
+    border-color: black;
+    border-width: 5px;
+    border-style: solid;
+    margin-top: 70px;
+    margin-left: 70px;
+    padding: 40px;
+
+}
+
+.list-item{
+    list-style:disc;
+    /* list-style-type: square; */
+    list-style-position: outside;
+    margin: 20px;
+    /* list-style-image: url('jigsaw.jpg'); */
+}
+
+::-webkit-scrollbar{
+    width:15px;
+}
+
+::-webkit-scrollbar-track{
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb{
+    background: #888;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover{
+    background: #555;
+}
+
+
+selector{
+    property: value
+}

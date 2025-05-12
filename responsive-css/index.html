@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>CSS Responsive Design</title>
+</head>
+<body>
+    <header>
+        <h1>ME Fashion Store</h1>
+        <p>For all your latest wear and apparel needs</p>
+    </header>
+
+    <nav>
+        <button class="burger">☰</button>
+        <ul class="nav-list">
+            <li>Home</li>
+            <li>About</li>
+            <li>Products</li>
+            <li>Contact Us</li>
+            <li>Blog</li>
+        </ul>
+    </nav>
+
+    
+    
+</body>
+<script>
+    document.querySelector('.burger').addEventListener('click', function(){
+        document.querySelector('.nav-list').classList.toggle('active');
+    })
+
+</script>
+</html>

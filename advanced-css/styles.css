@@ -1,0 +1,112 @@
+:root{
+    --clr-dark:#0f172a;
+    --clr-light:#f1f5f9;
+    --clr-accent:#e11d48;
+}
+
+*,
+*::before,
+*::after{
+    box-sizing: border-box;
+}
+
+body{
+    margin: 0;
+    padding: 20px; 
+    line-height: 1.6;
+    word-spacing: 1.4px;
+    font-family: 'Roboto', sans-serif;
+    color: var(--clr-dark);
+    background-color: var(--clr-light);
+   
+}
+
+.item{
+    
+    background-color: #fb7185;
+    padding: 1em;
+    font-weight: 700;
+    color: var(--clr-light);
+    text-align: center;
+    border: 5px solid var(--clr-accent);
+    border-radius: 10px;
+    margin: 40px;
+}
+
+ /* Named grid lines (Layout) */
+/* .container{
+    display:grid;
+    grid-template-columns: [main-start sidebar-start] 1fr [sidebar-end content-start] 3fr [content-end main-end];
+    grid-template-rows: [header-start] 100px [header-end body-start] auto [body-end footer-start] 100px [footer-end];
+    gap:30px; 
+    height: 600px;
+    width: 80%;
+    margin: 20px auto;
+    border: 10px solid var(--clr-dark);
+
+}
+
+.item1{
+   grid-column: main-start / main-end;
+   grid-row: header-start/ header-end;
+   background-color: #e11d48;
+}
+
+.item2{
+    grid-column: sidebar-start/sidebar-end;
+    grid-row: body-start/ body-end;
+    background-color: #b31d1d;    
+}
+
+.item3{
+    grid-column: content-start/content-end;
+    grid-row: body-start/ body-end;
+    background-color: #0ea;
+
+
+}
+
+.item4{
+    grid-column: main-start / main-end;
+    grid-row: footer-start / footer-end;
+    background-color: cornflowerblue;
+} */
+
+
+.container{
+    display: grid;
+    width: 80%;
+    height: 600px;
+    margin: 20px auto;
+    border: 10px solid var(--clr-dark);
+    grid-template-columns: 1fr 2fr 1fr;
+    grid-template-rows: auto  1fr auto;
+    gap:30px;
+    grid-template-areas: 
+        "header header header"
+        "sidebar main main"
+        "footer footer footer"
+    ;
+}
+
+.item1{
+    grid-area: header;
+    background-color: #e11d48;
+}
+
+.item2{
+    grid-area: sidebar;
+    background-color: rgb(240, 98, 51);
+
+}
+
+.item3{
+    grid-area: main;
+    background-color: aqua;
+    
+}
+
+.item4{
+    grid-area: footer;
+    background-color: #0ea;
+}
