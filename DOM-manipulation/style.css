@@ -1,0 +1,146 @@
+body{
+    margin: 0;
+    padding:0;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f4f4f4;
+}
+
+nav{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    text-align: center;
+}
+
+nav li{
+    display: inline;
+    color: #333;
+    list-style: none;
+    padding: 30px;
+}
+
+nav li a{
+    text-decoration: none;
+    color: #333;
+}
+
+nav li a:hover{
+    color:#666060;
+}
+
+.app{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-top: 50px;
+}
+
+.actions{
+    padding:20px;
+    margin: 5px;
+}
+
+#add-project, #view-project, #clients, #devs{
+    font-size: 15px;
+    border-radius: 15px;
+    height: 40px;
+    border: none;
+    color: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+#add-project{
+    background-color: #10b6;
+}
+
+#add-project:hover{
+    transform: translateY(-2px);
+    background-color: rgba(109, 102, 190, 0.4);
+
+}
+
+#view-project{
+    background-color: #84af20;
+}
+
+#view-project:hover{
+    background-color: #a5b67d;
+    transform: translateY(-2px);
+
+
+}
+
+#clients{
+    background-color: #1ac;
+}
+
+#clients:hover{
+    transform: translateY(-2px);
+    background-color: rgb(169, 192, 197);
+}
+
+#devs{
+    background-color: #5ed626;
+}
+
+#devs:hover{
+    transform: translateY(-2px);
+    background-color: #adcc9f;
+
+}
+
+table{
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+}
+
+th{
+    background-color: #f4f4f4;
+    color: #333;
+    font-weight: bold;
+    padding: 10px;
+    text-align: left;
+    border: none;
+}
+
+td{
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+tr:nth-child(even){
+    background-color: #f9f9f9;
+}
+
+tr:hover{
+    background-color: #eaeaea;
+}
+
+.edit-button{
+    background-color: #168b07;
+    color: white;
+    font-size: 15px;
+    border-radius: 15px;
+    height: 40px;
+    border: none;
+    margin-right: 10px;
+    padding: 0 15px;
+}
+
+.delete-button{
+    background-color: #ee0d0d;
+    color: white;
+    font-size: 15px;
+    border-radius: 15px;
+    height: 40px;
+    border: none;
+    margin-right: 10px;
+    padding: 0 15px;
+}

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+        <title>Dashboard | Project Management Dashboard</title>
+    </head>
+
+    <body>
+        <nav>
+            <ul>
+                <li><a href="#">Dashboard</a></li>
+                <li><a href="#">Login</a></li>
+                <li><a href="#">Register</a></li>
+            </ul>
+        </nav>
+
+        <section class ="app">
+            <div class="dashboard">
+                <h1>Freelancer Project Management System</h1>
+                <div class="actions">
+                    <button onclick="handleNewProject()" id="add-project"> New Project</button>
+                    <button id="view-project"> Project Details</button>
+                    <button id="clients"> View Clients</button>
+                    <button id="devs"> View Developers</button>
+                </div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Project Name</th>
+                        <th>Project Details</th>
+                        <th>Client</th>
+                        <th>Developer</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <!-- <tr>
+                        <td>Odin Project</td>
+                        <td>A hotspot billing system</td>
+                        <td>Swift</td>
+                        <td>John Doe</td>
+                        <td>2024-06-14</td>
+                        <td>2024-09-14</td>
+                        <td>
+                            <button class="edit-button">Edit</button>
+                            <button class="delete-button">Delete</button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Odin Project</td>
+                        <td>A hotspot billing system</td>
+                        <td>Swift</td>
+                        <td>John Doe</td>
+                        <td>2024-06-14</td>
+                        <td>2024-09-14</td>
+                        <td>
+                            <button class="edit-button">Edit</button>
+                            <button class="delete-button">Delete</button>
+                        </td>
+                    </tr> -->
+                </tbody>
+            </table>
+        </section>
+    </body>
+    <script src="script.js"></script>
+    </html>
