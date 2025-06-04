@@ -1,0 +1,32 @@
+@baseUrl = http://localhost:3000
+
+### CREATE A NEW USER
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "name": "Mark Otwane",
+    "email": "mark.otwane@gmail.com",
+    "phone": "+25471234568"
+}
+
+### GET All Users
+GET http://localhost:3000/users
+
+### Get all active users
+GET http://localhost:3000/users?active=true
+
+### GET user by email
+GET {{baseUrl}}/users/email/mark.otwane@gmail.com
+
+### UPDATE user data
+PATCH {{baseUrl}}/users/3
+Content-Type: application/json
+
+{
+    "checkInDate": "2025-06-06",
+    "checkOutDate": "2025-06-25",
+    "roomNumber": 500
+}
+
+
