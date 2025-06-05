@@ -21,92 +21,79 @@ import { UpdateUserDto } from './dtos/update-user.dto';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  /**
-   * Register a new hotel guest
-   * POST /users
-   * Body { "name", "email", phone}
-   */
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() data: CreateUserDto): ApiResponse<User> {
+  async create(@Body() data: CreateUserDto): Promise<ApiResponse<User>> {
     try {
-      const user = this.usersService.create(data);
+      const user = await this.usersService.create(data);
       return {
         sucess: true,
-        message: 'Guest registered succesfully',
+        message: 'Guest registered successfully',
         data: user,
       };
     } catch (error) {
       return {
         sucess: false,
-        message: ' Failed to register guest',
-        error: error instanceof Error ? error.message : ' Unknown error',
+        message: 'Failed to register guest',
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
 
-  /**
-   * Get all hotel guests
-   * GET /users?active=true
-   */
   @Get()
-  findAll(@Query('active') active?: string): ApiResponse<User[]> {
+  async findAll(
+    @Query('active') active?: string,
+  ): Promise<ApiResponse<User[]>> {
     try {
       let users: User[];
 
-      if (active === ' active') {
-        users = this.usersService.findActive();
+      if (active === 'true') {
+        users = await this.usersService.findActive();
       } else {
-        users = this.usersService.findAll();
+        users = await this.usersService.findAll();
       }
 
       return {
         sucess: true,
-        message: `Retrived ${users.length} guests`,
+        message: `Retrieved ${users.length} guests`,
         data: users,
       };
     } catch (error) {
       return {
         sucess: false,
-        message: 'Failed to retreive guests',
-        error: error instanceof Error ? error.message : ' Unknown Error',
-      };
-    }
-  }
-
-  /**
-   * Get user by id
-   * GET /users/:id
-   */
-  @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number): ApiResponse<User> {
-    try {
-      const user = this.usersService.findOne(id);
-      return {
-        sucess: true,
-        message: ' Guest found',
-        data: user,
-      };
-    } catch (error) {
-      return {
-        sucess: false,
-        message: 'Guest Not found',
+        message: 'Failed to retrieve guests',
         error: error instanceof Error ? error.message : 'Unknown Error',
       };
     }
   }
 
-  /**
-   * Find guest by email
-   * GET /users/email/:email
-   */
-  @Get('email/:email')
-  findByEmail(@Param('email') email: string): ApiResponse<User> {
+  @Get(':id')
+  async findOne(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<ApiResponse<User>> {
     try {
-      const user = this.usersService.findByEmail(email);
+      const user = await this.usersService.findOne(id);
       return {
         sucess: true,
-        message: 'Guest By email found',
+        message: 'Guest found',
+        data: user,
+      };
+    } catch (error) {
+      return {
+        sucess: false,
+        message: 'Guest not found',
+        error: error instanceof Error ? error.message : 'Unknown Error',
+      };
+    }
+  }
+
+  @Get('email/:email')
+  async findByEmail(@Param('email') email: string): Promise<ApiResponse<User>> {
+    try {
+      const user = await this.usersService.findByEmail(email);
+      return {
+        sucess: true,
+        message: 'Guest by email found',
         data: user,
       };
     } catch (error) {
@@ -118,20 +105,16 @@ export class UsersController {
     }
   }
 
-  /**
-   * Update guest profile
-   * PATCH users/:id
-   */
-  @Patch(':id/:post')
-  update(
+  @Patch(':id')
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() data: UpdateUserDto,
-  ): ApiResponse<User> {
+  ): Promise<ApiResponse<User>> {
     try {
-      const user = this.usersService.update(id, data);
+      const user = await this.usersService.update(id, data);
       return {
         sucess: true,
-        message: 'Guest info updated succesfully',
+        message: 'Guest info updated successfully',
         data: user,
       };
     } catch (error) {
@@ -143,14 +126,12 @@ export class UsersController {
     }
   }
 
-  /**
-   * Checkout a user (soft delete)
-   * DELETE /user/:id
-   */
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number): ApiResponse<null> {
+  async remove(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<ApiResponse<null>> {
     try {
-      const result = this.usersService.remove(id);
+      const result = await this.usersService.remove(id);
       return {
         sucess: true,
         message: result.message,
@@ -159,20 +140,17 @@ export class UsersController {
       return {
         sucess: false,
         message: 'Failed to checkout guest',
-        error: error instanceof Error ? error.message : ' Unknown error',
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
 
-  /**
-   * Permanently delete a guests (hard delete)
-   * DELETE /users/:id/permanent
-   */
   @Delete(':id/permanent')
-  delete(@Param('id', ParseIntPipe) id: number): ApiResponse<null> {
+  async delete(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<ApiResponse<null>> {
     try {
-      const result = this.usersService.delete(id);
-
+      const result = await this.usersService.delete(id);
       return {
         sucess: true,
         message: result.message,

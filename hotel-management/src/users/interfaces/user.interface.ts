@@ -3,10 +3,10 @@ export interface User {
   name: string;
   email: string;
   phone?: string;
-  checkInDate?: Date;
-  checkOutDate?: Date;
-  roomNumber?: number;
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  check_in_date?: Date;
+  check_out_date?: Date;
+  room_number?: number;
+  is_active: boolean;
+  created_at: Date;
+  updated_at: Date;
 }

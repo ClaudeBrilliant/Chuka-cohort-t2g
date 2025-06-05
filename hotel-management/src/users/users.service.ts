@@ -1,193 +1,214 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   ConflictException,
   Injectable,
   NotFoundException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { User } from './interfaces/user.interface';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
+import { DatabaseService } from '../database/connection.service';
 
 @Injectable()
 export class UsersService {
-  private users: User[] = [
-    {
-      id: 1,
-      name: 'John Doe',
-      email: 'john.doe@gmail.com',
-      phone: '+2356666666879',
-      checkInDate: new Date('2025-06-08'),
-      checkOutDate: new Date('2025-06-12'),
-      roomNumber: 101,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: 2,
-      name: 'Jane Doe',
-      email: 'jane.doe@gmail.com',
-      phone: '+23525666879',
-      checkInDate: new Date('2025-06-08'),
-      checkOutDate: new Date('2025-06-12'),
-      roomNumber: 102,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  ];
-  private nextId = 3;
+  constructor(private readonly databaseService: DatabaseService) {}
 
-  create(data: CreateUserDto): User {
-    const existingUser = this.users.find((user) => user.email === data.email);
-
-    if (existingUser) {
-      throw new ConflictException(
-        `Guest with email ${data.email} already exists`,
+  async create(data: CreateUserDto): Promise<User> {
+    try {
+      const result = await this.databaseService.query(
+        `SELECT * FROM sp_create_user($1, $2, $3, $4, $5, $6)`,
+        [
+          data.name,
+          data.email,
+          data.phone || null,
+          data.checkInDate || null,
+          data.checkOutDate || null,
+          data.roomNumber || null,
+        ],
       );
-    }
-    if (data.checkInDate && data.checkOutDate) {
-      if (new Date(data.checkInDate) >= new Date(data.checkOutDate)) {
+
+      if (result.rows.length === 0) {
+        throw new InternalServerErrorException('Failed to create user');
+      }
+
+      return this.mapRowToUser(result.rows[0]);
+    } catch (error: any) {
+      if (error instanceof Error && error.message.includes('already exists')) {
+        throw new ConflictException(error.message);
+      }
+      if (
+        error instanceof Error &&
+        error.message.includes('Check out date must be after check in date')
+      ) {
         throw new ConflictException(
-          'Check out date must be before check in date',
+          'Check out date must be after check in date',
         );
       }
+      throw new InternalServerErrorException('Failed to create user');
     }
-    const newUser: User = {
-      id: this.nextId++,
-      ...data,
-      checkInDate: data.checkInDate ? new Date(data.checkInDate) : undefined,
-      checkOutDate: data.checkOutDate ? new Date(data.checkOutDate) : undefined,
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    this.users.push(newUser);
-
-    return newUser;
   }
 
-  /**
-   * Get all hotel guests
-   * @params
-   * @return User[]
-   */
-  findAll(): User[] {
-    return this.users;
-  }
-
-  /**
-   * Get active hotel guests
-   * @params
-   * @return User[]
-   */
-  findActive(): User[] {
-    return this.users.filter((user) => user.isActive);
-  }
-
-  /**
-   * Find user by id
-   * @params userId
-   * @return User
-   */
-  findOne(id: number): User {
-    const user = this.users.find((user) => user.id === id);
-    if (!user) {
-      throw new NotFoundException(`Guest with id ${id} not found`);
-    }
-    return user;
-  }
-
-  /**
-   * Find guest by email
-   * @params email
-   * @return User
-   */
-  findByEmail(email: string): User {
-    const user = this.users.find((user) => user.email === email);
-
-    if (!user) {
-      throw new NotFoundException(`Guest with email ${email} not found`);
-    }
-    return user;
-  }
-
-  /**
-   * Update guest profile
-   * @params id, updateUserDto
-   * @return User
-   */
-  update(id: number, data: UpdateUserDto): User {
-    const userIndex = this.users.findIndex((user) => user.id === id);
-    if (userIndex === -1) {
-      throw new NotFoundException(`Guest with id ${id} not found`);
-    }
-
-    if (data.email) {
-      const existingUser = this.users.find(
-        (user) => user.email === data.email && user.id !== id,
+  async findAll(): Promise<User[]> {
+    try {
+      const result = await this.databaseService.query(
+        'SELECT * FROM sp_get_all_users()',
       );
-      if (existingUser) {
+      return result.rows.map((row: any) => this.mapRowToUser(row));
+    } catch {
+      throw new InternalServerErrorException('Failed to retrieve users');
+    }
+  }
+
+  async findActive(): Promise<User[]> {
+    try {
+      const result = await this.databaseService.query(
+        'SELECT * FROM sp_get_active_users()',
+      );
+      return result.rows.map((row: any) => this.mapRowToUser(row));
+    } catch {
+      throw new InternalServerErrorException('Failed to retrieve active users');
+    }
+  }
+
+  async findOne(id: number): Promise<User> {
+    try {
+      const result = await this.databaseService.query(
+        'SELECT * FROM sp_get_user_by_id($1)',
+        [id],
+      );
+
+      if (result.rows.length === 0) {
+        throw new NotFoundException(`Guest with id ${id} not found`);
+      }
+
+      return this.mapRowToUser(result.rows[0]);
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('not found')) {
+        throw new NotFoundException(`Guest with id ${id} not found`);
+      }
+      throw new InternalServerErrorException('Failed to retrieve user');
+    }
+  }
+
+  async findByEmail(email: string): Promise<User> {
+    try {
+      const result = await this.databaseService.query(
+        'SELECT * FROM sp_get_user_by_email($1)',
+        [email],
+      );
+
+      if (result.rows.length === 0) {
+        throw new NotFoundException(`Guest with email ${email} not found`);
+      }
+
+      return this.mapRowToUser(result.rows[0]);
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('not found')) {
+        throw new NotFoundException(`Guest with email ${email} not found`);
+      }
+      throw new InternalServerErrorException('Failed to retrieve user');
+    }
+  }
+
+  async update(id: number, data: UpdateUserDto): Promise<User> {
+    try {
+      const result = await this.databaseService.query(
+        `SELECT * FROM sp_update_user($1, $2, $3, $4, $5, $6, $7, $8)`,
+        [
+          id,
+          data.name || null,
+          data.email || null,
+          data.phone || null,
+          data.checkInDate || null,
+          data.checkOutDate || null,
+          data.roomNumber || null,
+          data.isActive !== undefined ? data.isActive : null,
+        ],
+      );
+
+      if (result.rows.length === 0) {
+        throw new NotFoundException(`Guest with id ${id} not found`);
+      }
+
+      return this.mapRowToUser(result.rows[0]);
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('not found')) {
+        throw new NotFoundException(`Guest with id ${id} not found`);
+      }
+      if (
+        error instanceof Error &&
+        error.message.includes('Another guest with this email exists')
+      ) {
         throw new ConflictException('Another guest with this email exists');
       }
-    }
-
-    if (data.checkInDate && data.checkOutDate) {
-      if (new Date(data.checkInDate) >= new Date(data.checkOutDate)) {
+      if (
+        error instanceof Error &&
+        error.message.includes('Check out date must be after check in date')
+      ) {
         throw new ConflictException(
-          'Check out date must be before check in date',
+          'Check out date must be after check in date',
         );
       }
+      throw new InternalServerErrorException('Failed to update user');
     }
-
-    const updatedUser = {
-      ...this.users[userIndex],
-      data,
-      checkInDate: data.checkInDate
-        ? new Date(data.checkInDate)
-        : this.users[userIndex].checkInDate,
-      checkOutDate: data.checkOutDate
-        ? new Date(data.checkOutDate)
-        : this.users[userIndex].checkOutDate,
-      updatedAt: new Date(),
-    };
-    this.users[userIndex] = updatedUser;
-    return updatedUser;
   }
 
-  /**
-   * Soft delete (sets is active field to false)
-   * @params id
-   * @return message:string
-   */
-  remove(id: number): { message: string } {
-    const userIndex = this.users.findIndex((user) => user.id === id);
-    if (userIndex === 1) {
-      throw new NotFoundException(`Guest with id ${id} not found`);
+  async remove(id: number): Promise<{ message: string }> {
+    try {
+      const result = await this.databaseService.query(
+        'SELECT * FROM sp_soft_delete_user($1)',
+        [id],
+      );
+
+      if (result.rows.length === 0) {
+        throw new NotFoundException(`Guest with id ${id} not found`);
+      }
+
+      return { message: result.rows[0].message };
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('not found')) {
+        throw new NotFoundException(`Guest with id ${id} not found`);
+      }
+      throw new InternalServerErrorException('Failed to checkout guest');
     }
-
-    this.users[userIndex].isActive = false;
-    this.users[userIndex].updatedAt = new Date();
-
-    return {
-      message: `Guest  ${this.users[userIndex].name} has checked out succesfully`,
-    };
   }
 
-  /**
-   * Hard delete (removes from array completely)
-   * @params id:number
-   * @return message: string
-   */
-  delete(id: number): { message: string } {
-    const userIndex = this.users.findIndex((user) => user.id === id);
-    if (userIndex === -1) {
-      throw new NotFoundException(`Guest with ID ${id} not found`);
-    }
-    const deletedUser = this.users.splice(userIndex, 1)[0];
+  async delete(id: number): Promise<{ message: string }> {
+    try {
+      const result = await this.databaseService.query(
+        'SELECT * FROM sp_hard_delete_user($1)',
+        [id],
+      );
 
+      if (result.rows.length === 0) {
+        throw new NotFoundException(`Guest with ID ${id} not found`);
+      }
+
+      return { message: result.rows[0].message };
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('not found')) {
+        throw new NotFoundException(`Guest with ID ${id} not found`);
+      }
+      throw new InternalServerErrorException('Failed to delete user');
+    }
+  }
+
+  private mapRowToUser(row: any): User {
     return {
-      message: `Guest ${deletedUser.name} has been permanently deleted`,
+      id: row.id,
+      name: row.name,
+      email: row.email,
+      phone: row.phone,
+      check_in_date: row.check_in_date,
+      check_out_date: row.check_out_date,
+      room_number: row.room_number,
+      is_active: row.is_active,
+      created_at: row.created_at,
+      updated_at: row.updated_at,
     };
   }
 }
