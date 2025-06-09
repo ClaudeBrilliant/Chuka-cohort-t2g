@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
@@ -12,83 +10,90 @@ import { User } from './interfaces/user.interface';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { DatabaseService } from '../database/connection.service';
+import { getPrismaClient } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly databaseService: DatabaseService) {}
 
+  private prisma = getPrismaClient();
+
   async create(data: CreateUserDto): Promise<User> {
     try {
-      const result = await this.databaseService.query(
-        `SELECT * FROM sp_create_user($1, $2, $3, $4, $5, $6)`,
-        [
-          data.name,
-          data.email,
-          data.phone || null,
-          data.checkInDate || null,
-          data.checkOutDate || null,
-          data.roomNumber || null,
-        ],
-      );
+      const existingUser = await this.prisma.user.findUnique({
+        where: { email: data.email },
+      });
 
-      if (result.rows.length === 0) {
-        throw new InternalServerErrorException('Failed to create user');
-      }
-
-      return this.mapRowToUser(result.rows[0]);
-    } catch (error: any) {
-      if (error instanceof Error && error.message.includes('already exists')) {
-        throw new ConflictException(error.message);
-      }
-      if (
-        error instanceof Error &&
-        error.message.includes('Check out date must be after check in date')
-      ) {
+      if (existingUser) {
         throw new ConflictException(
-          'Check out date must be after check in date',
+          `User with email ${data.email} already exists`,
         );
       }
-      throw new InternalServerErrorException('Failed to create user');
+
+      const user = await this.prisma.user.create({
+        data: {
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          checkInDate: data.checkInDate,
+          checkOutDate: data.checkOutDate,
+          roomNumber: data.roomNumber,
+          isActive: true,
+        },
+      });
+
+      console.log(`Created new guest ${user.name} (ID: ${user.id})`);
+      return this.mapPrismaUserToInterface(user);
+    } catch (error) {
+      if (error instanceof ConflictException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        `Failed to create user: ${error.message}`,
+      );
     }
   }
 
   async findAll(): Promise<User[]> {
     try {
-      const result = await this.databaseService.query(
-        'SELECT * FROM sp_get_all_users()',
-      );
-      return result.rows.map((row: any) => this.mapRowToUser(row));
-    } catch {
-      throw new InternalServerErrorException('Failed to retrieve users');
+      const users = await this.prisma.user.findMany({
+        orderBy: { id: 'asc' },
+      });
+      return users.map((user) => this.mapPrismaUserToInterface(user));
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to retrieve users', error);
     }
   }
 
   async findActive(): Promise<User[]> {
     try {
-      const result = await this.databaseService.query(
-        'SELECT * FROM sp_get_active_users()',
+      const users = await this.prisma.user.findMany({
+        where: { isActive: true },
+        orderBy: { id: 'asc' },
+      });
+      return users.map((user) => this.mapPrismaUserToInterface(user));
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Failed to retrieve active users',
+        error,
       );
-      return result.rows.map((row: any) => this.mapRowToUser(row));
-    } catch {
-      throw new InternalServerErrorException('Failed to retrieve active users');
     }
   }
 
   async findOne(id: number): Promise<User> {
     try {
-      const result = await this.databaseService.query(
-        'SELECT * FROM sp_get_user_by_id($1)',
-        [id],
-      );
+      const user = await this.prisma.user.findUnique({
+        where: { id },
+      });
 
-      if (result.rows.length === 0) {
+      if (!user) {
         throw new NotFoundException(`Guest with id ${id} not found`);
       }
 
-      return this.mapRowToUser(result.rows[0]);
+      return this.mapPrismaUserToInterface(user);
     } catch (error) {
-      if (error instanceof Error && error.message.includes('not found')) {
-        throw new NotFoundException(`Guest with id ${id} not found`);
+      if (error instanceof NotFoundException) {
+        throw error;
       }
       throw new InternalServerErrorException('Failed to retrieve user');
     }
@@ -96,19 +101,18 @@ export class UsersService {
 
   async findByEmail(email: string): Promise<User> {
     try {
-      const result = await this.databaseService.query(
-        'SELECT * FROM sp_get_user_by_email($1)',
-        [email],
-      );
+      const user = await this.prisma.user.findUnique({
+        where: { email },
+      });
 
-      if (result.rows.length === 0) {
+      if (!user) {
         throw new NotFoundException(`Guest with email ${email} not found`);
       }
 
-      return this.mapRowToUser(result.rows[0]);
+      return this.mapPrismaUserToInterface(user);
     } catch (error) {
-      if (error instanceof Error && error.message.includes('not found')) {
-        throw new NotFoundException(`Guest with email ${email} not found`);
+      if (error instanceof NotFoundException) {
+        throw error;
       }
       throw new InternalServerErrorException('Failed to retrieve user');
     }
@@ -116,42 +120,59 @@ export class UsersService {
 
   async update(id: number, data: UpdateUserDto): Promise<User> {
     try {
-      const result = await this.databaseService.query(
-        `SELECT * FROM sp_update_user($1, $2, $3, $4, $5, $6, $7, $8)`,
-        [
-          id,
-          data.name || null,
-          data.email || null,
-          data.phone || null,
-          data.checkInDate || null,
-          data.checkOutDate || null,
-          data.roomNumber || null,
-          data.isActive !== undefined ? data.isActive : null,
-        ],
-      );
+      // Check if user exists
+      const existingUser = await this.prisma.user.findUnique({
+        where: { id },
+      });
 
-      if (result.rows.length === 0) {
+      if (!existingUser) {
         throw new NotFoundException(`Guest with id ${id} not found`);
       }
 
-      return this.mapRowToUser(result.rows[0]);
+      // Check for email conflicts if email is being updated
+      if (data.email && data.email !== existingUser.email) {
+        const emailConflict = await this.prisma.user.findUnique({
+          where: { email: data.email },
+        });
+
+        if (emailConflict) {
+          throw new ConflictException('Another guest with this email exists');
+        }
+      }
+
+      // Validate check dates
+      if (data.checkInDate && data.checkOutDate) {
+        if (data.checkInDate >= data.checkOutDate) {
+          throw new ConflictException(
+            'Check out date must be after check in date',
+          );
+        }
+      }
+
+      const updatedUser = await this.prisma.user.update({
+        where: { id },
+        data: {
+          ...(data.name && { name: data.name }),
+          ...(data.email && { email: data.email }),
+          ...(data.phone !== undefined && { phone: data.phone }),
+          ...(data.checkInDate !== undefined && {
+            checkInDate: data.checkInDate,
+          }),
+          ...(data.checkOutDate !== undefined && {
+            checkOutDate: data.checkOutDate,
+          }),
+          ...(data.roomNumber !== undefined && { roomNumber: data.roomNumber }),
+          ...(data.isActive !== undefined && { isActive: data.isActive }),
+        },
+      });
+
+      return this.mapPrismaUserToInterface(updatedUser);
     } catch (error) {
-      if (error instanceof Error && error.message.includes('not found')) {
-        throw new NotFoundException(`Guest with id ${id} not found`);
-      }
       if (
-        error instanceof Error &&
-        error.message.includes('Another guest with this email exists')
+        error instanceof NotFoundException ||
+        error instanceof ConflictException
       ) {
-        throw new ConflictException('Another guest with this email exists');
-      }
-      if (
-        error instanceof Error &&
-        error.message.includes('Check out date must be after check in date')
-      ) {
-        throw new ConflictException(
-          'Check out date must be after check in date',
-        );
+        throw error;
       }
       throw new InternalServerErrorException('Failed to update user');
     }
@@ -159,19 +180,23 @@ export class UsersService {
 
   async remove(id: number): Promise<{ message: string }> {
     try {
-      const result = await this.databaseService.query(
-        'SELECT * FROM sp_soft_delete_user($1)',
-        [id],
-      );
+      const user = await this.prisma.user.findUnique({
+        where: { id, isActive: true },
+      });
 
-      if (result.rows.length === 0) {
+      if (!user) {
         throw new NotFoundException(`Guest with id ${id} not found`);
       }
 
-      return { message: result.rows[0].message };
+      await this.prisma.user.update({
+        where: { id },
+        data: { isActive: false },
+      });
+
+      return { message: `Guest ${user.name} has checked out successfully` };
     } catch (error) {
-      if (error instanceof Error && error.message.includes('not found')) {
-        throw new NotFoundException(`Guest with id ${id} not found`);
+      if (error instanceof NotFoundException) {
+        throw error;
       }
       throw new InternalServerErrorException('Failed to checkout guest');
     }
@@ -179,24 +204,28 @@ export class UsersService {
 
   async delete(id: number): Promise<{ message: string }> {
     try {
-      const result = await this.databaseService.query(
-        'SELECT * FROM sp_hard_delete_user($1)',
-        [id],
-      );
+      const user = await this.prisma.user.findUnique({
+        where: { id },
+      });
 
-      if (result.rows.length === 0) {
+      if (!user) {
         throw new NotFoundException(`Guest with ID ${id} not found`);
       }
 
-      return { message: result.rows[0].message };
+      await this.prisma.user.delete({
+        where: { id },
+      });
+
+      return { message: `Guest ${user.name} has been permanently deleted` };
     } catch (error) {
-      if (error instanceof Error && error.message.includes('not found')) {
-        throw new NotFoundException(`Guest with ID ${id} not found`);
+      if (error instanceof NotFoundException) {
+        throw error;
       }
       throw new InternalServerErrorException('Failed to delete user');
     }
   }
 
+  // Keep the existing mapRowToUser for SQL stored procedures compatibility
   private mapRowToUser(row: any): User {
     return {
       id: row.id,
@@ -209,6 +238,22 @@ export class UsersService {
       is_active: row.is_active,
       created_at: row.created_at,
       updated_at: row.updated_at,
+    };
+  }
+
+  // New method to map Prisma User to interface
+  private mapPrismaUserToInterface(user: any): User {
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      check_in_date: user.checkInDate,
+      check_out_date: user.checkOutDate,
+      room_number: user.roomNumber,
+      is_active: user.isActive,
+      created_at: user.createdAt,
+      updated_at: user.updatedAt,
     };
   }
 }

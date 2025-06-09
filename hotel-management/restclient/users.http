@@ -5,9 +5,9 @@ POST http://localhost:3000/users
 Content-Type: application/json
 
 {
-    "name": "Mark Otwane",
-    "email": "mark.otwane@gmail.com",
-    "phone": "+25471234568"
+    "name": "Harrison Njoroge",
+    "email": "harrison.njoroge@gmail.com",
+    "phone": "+25471231568"
 }
 
 ### GET All Users

@@ -1,0 +1,231 @@
+### Variables
+@baseUrl = http://localhost:3000
+@bookingId = 1
+@userId = 1
+@roomId = 1
+
+### Create a new booking
+POST {{baseUrl}}/bookings
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "roomId": 1,
+  "checkInDate": "2025-06-15T14:00:00Z",
+  "checkOutDate": "2025-06-20T11:00:00Z",
+  "totalAmount": 500.00,
+  "status": "PENDING",
+  "specialRequests": "Late check-in requested"
+}
+
+### Create another booking
+POST {{baseUrl}}/bookings
+Content-Type: application/json
+
+{
+  "userId": 2,
+  "roomId": 2,
+  "checkInDate": "2025-06-18T15:00:00Z",
+  "checkOutDate": "2025-06-25T10:00:00Z",
+  "specialRequests": "Ground floor room preferred"
+}
+
+### Create booking without total amount (auto-calculate)
+POST {{baseUrl}}/bookings
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "roomId": 3,
+  "checkInDate": "2025-07-01T14:00:00Z",
+  "checkOutDate": "2025-07-05T11:00:00Z",
+  "status": "CONFIRMED",
+  "specialRequests": "Honeymoon suite decoration"
+}
+
+### Get all bookings
+GET {{baseUrl}}/bookings
+
+### Get booking by ID
+GET {{baseUrl}}/bookings/{{bookingId}}
+
+### Get bookings by user
+GET {{baseUrl}}/bookings/user/{{userId}}
+
+### Get bookings by room
+GET {{baseUrl}}/bookings/room/{{roomId}}
+
+### Get bookings by status
+GET {{baseUrl}}/bookings/status/PENDING
+
+### Get confirmed bookings
+GET {{baseUrl}}/bookings/status/CONFIRMED
+
+### Get bookings by date range
+GET {{baseUrl}}/bookings/date-range?startDate=2025-06-01&endDate=2025-06-30
+
+### Get bookings with query parameters
+GET {{baseUrl}}/bookings?status=CONFIRMED
+
+### Get bookings with date range query
+GET {{baseUrl}}/bookings?startDate=2025-06-15&endDate=2025-06-25
+
+### Update booking
+PATCH {{baseUrl}}/bookings/{{bookingId}}
+Content-Type: application/json
+
+{
+  "checkOutDate": "2025-06-22T11:00:00Z",
+  "totalAmount": 700.00,
+  "specialRequests": "Late check-in and early breakfast requested"
+}
+
+### Update booking status to confirmed
+PATCH {{baseUrl}}/bookings/{{bookingId}}
+Content-Type: application/json
+
+{
+  "status": "CONFIRMED"
+}
+
+### Check in booking
+PATCH {{baseUrl}}/bookings/{{bookingId}}/checkin
+
+### Check out booking
+PATCH {{baseUrl}}/bookings/{{bookingId}}/checkout
+
+### Cancel booking
+PATCH {{baseUrl}}/bookings/{{bookingId}}/cancel
+
+### Delete booking
+DELETE {{baseUrl}}/bookings/{{bookingId}}
+
+### Test error cases
+
+### Try to create booking with invalid dates
+POST {{baseUrl}}/bookings
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "roomId": 1,
+  "checkInDate": "2025-06-20T14:00:00Z",
+  "checkOutDate": "2025-06-18T11:00:00Z",
+  "totalAmount": 500.00
+}
+
+### Try to create booking for non-existent user
+POST {{baseUrl}}/bookings
+Content-Type: application/json
+
+{
+  "userId": 9999,
+  "roomId": 1,
+  "checkInDate": "2025-06-15T14:00:00Z",
+  "checkOutDate": "2025-06-20T11:00:00Z",
+  "totalAmount": 500.00
+}
+
+### Try to create booking for non-existent room
+POST {{baseUrl}}/bookings
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "roomId": 9999,
+  "checkInDate": "2025-06-15T14:00:00Z",
+  "checkOutDate": "2025-06-20T11:00:00Z",
+  "totalAmount": 500.00
+}
+
+### Try to create conflicting booking
+POST {{baseUrl}}/bookings
+Content-Type: application/json
+
+{
+  "userId": 2,
+  "roomId": 1,
+  "checkInDate": "2025-06-17T14:00:00Z",
+  "checkOutDate": "2025-06-22T11:00:00Z",
+  "totalAmount": 500.00
+}
+
+### Try to get non-existent booking
+GET {{baseUrl}}/bookings/9999
+
+### Try to update non-existent booking
+PATCH {{baseUrl}}/bookings/9999
+Content-Type: application/json
+
+{
+  "specialRequests": "Updated request"
+}
+
+### Try to check in non-confirmed booking
+PATCH {{baseUrl}}/bookings/2/checkin
+
+### Try to check out non-checked-in booking
+PATCH {{baseUrl}}/bookings/2/checkout
+
+### Try to cancel already cancelled booking
+PATCH {{baseUrl}}/bookings/2/cancel
+
+### Advanced booking scenarios
+
+### Create multiple bookings for testing
+POST {{baseUrl}}/bookings
+Content-Type: application/json
+
+{
+  "userId": 3,
+  "roomId": 4,
+  "checkInDate": "2025-08-01T14:00:00Z",
+  "checkOutDate": "2025-08-07T11:00:00Z",
+  "status": "CONFIRMED",
+  "specialRequests": "Business traveler - quiet room"
+}
+
+###
+POST {{baseUrl}}/bookings
+Content-Type: application/json
+
+{
+  "userId": 4,
+  "roomId": 5,
+  "checkInDate": "2025-08-05T14:00:00Z",
+  "checkOutDate": "2025-08-10T11:00:00Z",
+  "status": "CHECKED_IN",
+  "specialRequests": "Family with children"
+}
+
+### Test booking workflow: Create -> Confirm -> Check In -> Check Out
+POST {{baseUrl}}/bookings
+Content-Type: application/json
+
+{
+  "userId": 5,
+  "roomId": 6,
+  "checkInDate": "2025-09-01T14:00:00Z",
+  "checkOutDate": "2025-09-05T11:00:00Z",
+  "status": "PENDING"
+}
+
+### Confirm the booking (assuming it got ID 6)
+PATCH {{baseUrl}}/bookings/6
+Content-Type: application/json
+
+{
+  "status": "CONFIRMED"
+}
+
+### Check in the booking
+PATCH {{baseUrl}}/bookings/6/checkin
+
+### Check out the booking
+PATCH {{baseUrl}}/bookings/6/checkout
+
+### Get all checked out bookings
+GET {{baseUrl}}/bookings/status/CHECKED_OUT
+
+### Get bookings for a specific month
+GET {{baseUrl}}/bookings/date-range?startDate=2025-08-01&endDate=2025-08-31
