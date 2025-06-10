@@ -1,0 +1,19 @@
+import { UserRole } from 'generated/prisma';
+
+export interface JwtPayload {
+  sub: number;
+  email: string;
+  role: UserRole;
+  iat?: number;
+  exp?: number;
+}
+
+export interface AuthResponse {
+  access_token: string;
+  user: {
+    id: number;
+    name: string;
+    email: string;
+    role: UserRole;
+  };
+}

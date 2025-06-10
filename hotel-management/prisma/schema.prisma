@@ -19,6 +19,8 @@ model User {
   name         String
   email        String    @unique
   phone        String?
+  password     String    // Add this field
+  role         UserRole  @default(GUEST) // Add this field
   checkInDate  DateTime? @map("check_in_date")
   checkOutDate DateTime? @map("check_out_date")
   roomNumber   Int?      @map("room_number")
@@ -80,4 +82,11 @@ enum BookingStatus {
   CHECKED_IN
   CHECKED_OUT
   CANCELLED
+}
+
+enum UserRole {
+  ADMIN
+  STAFF
+  MANAGER
+  GUEST
 }
