@@ -58,7 +58,7 @@ export class RoomsController {
   }
 
   @Get('type/:roomTypeId')
-  findByRoomType(@Param('roomTypeId', ParseIntPipe) roomTypeId: number) {
+  findByRoomType(@Param('roomTypeId', ParseIntPipe) roomTypeId: string) {
     return this.roomsService.findByRoomType(roomTypeId);
   }
 
@@ -75,7 +75,7 @@ export class RoomsController {
   @Get(':id')
   @UseGuards(PermissionGuard)
   @RequirePermissions(Permission.READ_ROOM)
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id', ParseIntPipe) id: string) {
     return this.roomsService.findOne(id);
   }
 
@@ -83,7 +83,7 @@ export class RoomsController {
   @UseGuards(PermissionGuard)
   @RequirePermissions(Permission.UPDATE_ROOM)
   update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) id: string,
     @Body() updateRoomDto: UpdateRoomDto,
   ) {
     return this.roomsService.update(id, updateRoomDto);
@@ -92,13 +92,13 @@ export class RoomsController {
   @Patch(':id/clean')
   @UseGuards(PermissionGuard)
   @RequirePermissions(Permission.CLEAN_ROOM)
-  markAsCleaned(@Param('id', ParseIntPipe) id: number) {
+  markAsCleaned(@Param('id', ParseIntPipe) id: string) {
     return this.roomsService.markAsCleaned(id);
   }
 
   @Patch(':id/availability')
   setAvailability(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) id: string,
     @Body('isAvailable') isAvailable: boolean,
   ) {
     return this.roomsService.setAvailability(id, isAvailable);
@@ -108,7 +108,7 @@ export class RoomsController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(PermissionGuard)
   @RequirePermissions(Permission.DELETE_ROOM)
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param('id', ParseIntPipe) id: string) {
     return this.roomsService.remove(id);
   }
 }

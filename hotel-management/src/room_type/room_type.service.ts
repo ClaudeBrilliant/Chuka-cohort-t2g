@@ -87,7 +87,7 @@ export class RoomTypeService {
    * @param id Room type ID
    * @returns RoomType
    */
-  async findOne(id: number): Promise<RoomType> {
+  async findOne(id: string): Promise<RoomType> {
     try {
       const roomType = await this.prisma.roomType.findUnique({
         where: { id },
@@ -159,7 +159,7 @@ export class RoomTypeService {
    * @param data UpdateRoomTypeDto
    * @returns RoomType
    */
-  async update(id: number, data: UpdateRoomTypeDto): Promise<RoomType> {
+  async update(id: string, data: UpdateRoomTypeDto): Promise<RoomType> {
     try {
       const existingRoomType = await this.prisma.roomType.findUnique({
         where: { id },
@@ -214,7 +214,7 @@ export class RoomTypeService {
    * @param id Room type ID
    * @returns Success message
    */
-  async remove(id: number): Promise<{ message: string }> {
+  async remove(id: string): Promise<{ message: string }> {
     try {
       const roomType = await this.prisma.roomType.findUnique({
         where: { id },

@@ -12,6 +12,7 @@ import { ResourceOwnerGuard } from './guards/resource-owner/resource-owner.guard
 import { OptionalAuthGuard } from './guards/optional-auth/optional-auth.guard';
 import { PermissionService } from './services/permission.service';
 import { PermissionController } from './controllers/permission.controller';
+import { MailerService } from 'src/shared/utils/mailer/mailer.service';
 
 @Module({
   imports: [ConfigModule, UsersModule],
@@ -25,6 +26,7 @@ import { PermissionController } from './controllers/permission.controller';
     ResourceActionGuard,
     ResourceOwnerGuard,
     OptionalAuthGuard,
+    MailerService,
   ],
   controllers: [AuthController, PermissionController],
   exports: [

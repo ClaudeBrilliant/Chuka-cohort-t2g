@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
@@ -5,18 +7,19 @@ import {
   Injectable,
   NotFoundException,
   InternalServerErrorException,
+  BadRequestException,
 } from '@nestjs/common';
 import { User } from './interfaces/user.interface';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
-import { DatabaseService } from '../database/connection.service';
 import { getPrismaClient } from 'src/prisma/prisma.service';
 import { UserRole } from 'generated/prisma';
 import * as bcrypt from 'bcryptjs';
+import { CloudinaryService } from 'src/shared/utils/cloudinary/cloudinary.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(private readonly cloudinaryService: CloudinaryService) {}
 
   private prisma = getPrismaClient();
 
@@ -108,7 +111,7 @@ export class UsersService {
     }
   }
 
-  async findOne(id: number): Promise<User> {
+  async findOne(id: string): Promise<User> {
     try {
       const user = await this.prisma.user.findUnique({
         where: { id },
@@ -146,7 +149,7 @@ export class UsersService {
     }
   }
 
-  async update(id: number, data: UpdateUserDto): Promise<User> {
+  async update(id: string, data: UpdateUserDto): Promise<User> {
     try {
       // Check if user exists
       const existingUser = await this.prisma.user.findUnique({
@@ -216,7 +219,7 @@ export class UsersService {
   }
 
   async changePassword(
-    id: number,
+    id: string,
     currentPassword: string,
     newPassword: string,
   ): Promise<{ message: string }> {
@@ -259,7 +262,7 @@ export class UsersService {
     }
   }
 
-  async remove(id: number): Promise<{ message: string }> {
+  async remove(id: string): Promise<{ message: string }> {
     try {
       const user = await this.prisma.user.findUnique({
         where: { id, isActive: true },
@@ -283,7 +286,7 @@ export class UsersService {
     }
   }
 
-  async delete(id: number): Promise<{ message: string }> {
+  async delete(id: string): Promise<{ message: string }> {
     try {
       const user = await this.prisma.user.findUnique({
         where: { id },
@@ -306,6 +309,38 @@ export class UsersService {
     }
   }
 
+  async uploadProfileImage(
+    id: string,
+    file: Express.Multer.File,
+  ): Promise<User> {
+    try {
+      const user = this.prisma.user.findFirst({
+        where: {
+          id: id,
+        },
+      });
+
+      if (!user) {
+        throw new BadRequestException(`User with id ${id} does not exist`);
+      }
+
+      const uploadResult = this.cloudinaryService.uploadUserProfileImage(
+        file,
+        id,
+      );
+
+      const updatedUser = await this.prisma.user.update({
+        where: {
+          id,
+        },
+        data: { profileImage: (await uploadResult).secure_url },
+      });
+
+      return this.mapPrismaUserToInterface(updatedUser);
+    } catch {
+      throw new InternalServerErrorException('Failed to upload image');
+    }
+  }
   // Keep the existing mapRowToUser for SQL stored procedures compatibility
   private mapRowToUser(row: any): User {
     return {

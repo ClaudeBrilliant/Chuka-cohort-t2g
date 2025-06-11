@@ -192,7 +192,7 @@ export class BookingService {
    * @param id Booking ID
    * @returns Booking
    */
-  async findOne(id: number): Promise<Booking> {
+  async findOne(id: string): Promise<Booking> {
     try {
       const booking = await this.prisma.booking.findUnique({
         where: { id },
@@ -238,7 +238,7 @@ export class BookingService {
    * @param userId User ID
    * @returns Booking[]
    */
-  async findByUser(userId: number): Promise<Booking[]> {
+  async findByUser(userId: string): Promise<Booking[]> {
     try {
       const bookings = await this.prisma.booking.findMany({
         where: { userId },
@@ -281,7 +281,7 @@ export class BookingService {
    * @param roomId Room ID
    * @returns Booking[]
    */
-  async findByRoom(roomId: number): Promise<Booking[]> {
+  async findByRoom(roomId: string): Promise<Booking[]> {
     try {
       const bookings = await this.prisma.booking.findMany({
         where: { roomId },
@@ -433,7 +433,7 @@ export class BookingService {
    * @param data UpdateBookingDto
    * @returns Booking
    */
-  async update(id: number, data: UpdateBookingDto): Promise<Booking> {
+  async update(id: string, data: UpdateBookingDto): Promise<Booking> {
     try {
       const existingBooking = await this.prisma.booking.findUnique({
         where: { id },
@@ -550,7 +550,7 @@ export class BookingService {
    * @param id Booking ID
    * @returns Booking
    */
-  async cancel(id: number): Promise<Booking> {
+  async cancel(id: string): Promise<Booking> {
     try {
       const booking = await this.prisma.booking.findUnique({
         where: { id },
@@ -610,7 +610,7 @@ export class BookingService {
    * @param id Booking ID
    * @returns Booking
    */
-  async checkIn(id: number): Promise<Booking> {
+  async checkIn(id: string): Promise<Booking> {
     try {
       const booking = await this.prisma.booking.findUnique({
         where: { id },
@@ -676,7 +676,7 @@ export class BookingService {
    * @param id Booking ID
    * @returns Booking
    */
-  async checkOut(id: number): Promise<Booking> {
+  async checkOut(id: string): Promise<Booking> {
     try {
       const booking = await this.prisma.booking.findUnique({
         where: { id },
@@ -745,7 +745,7 @@ export class BookingService {
    * @param id Booking ID
    * @returns Success message
    */
-  async remove(id: number): Promise<{ message: string }> {
+  async remove(id: string): Promise<{ message: string }> {
     try {
       const booking = await this.prisma.booking.findUnique({
         where: { id },

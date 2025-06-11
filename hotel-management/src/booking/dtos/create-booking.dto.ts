@@ -1,8 +1,8 @@
 import { BookingStatus } from '../interfaces/booking.interface';
 
 export class CreateBookingDto {
-  userId: number;
-  roomId: number;
+  userId: string;
+  roomId: string;
   checkInDate: Date;
   checkOutDate: Date;
   totalAmount: number;

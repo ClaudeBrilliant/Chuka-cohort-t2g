@@ -47,12 +47,12 @@ export class BookingController {
   }
 
   @Get('user/:userId')
-  findByUser(@Param('userId', ParseIntPipe) userId: number) {
+  findByUser(@Param('userId', ParseIntPipe) userId: string) {
     return this.bookingService.findByUser(userId);
   }
 
   @Get('room/:roomId')
-  findByRoom(@Param('roomId', ParseIntPipe) roomId: number) {
+  findByRoom(@Param('roomId', ParseIntPipe) roomId: string) {
     return this.bookingService.findByRoom(roomId);
   }
 
@@ -73,36 +73,36 @@ export class BookingController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id', ParseIntPipe) id: string) {
     return this.bookingService.findOne(id);
   }
 
   @Patch(':id')
   update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) id: string,
     @Body() updateBookingDto: UpdateBookingDto,
   ) {
     return this.bookingService.update(id, updateBookingDto);
   }
 
   @Patch(':id/cancel')
-  cancel(@Param('id', ParseIntPipe) id: number) {
+  cancel(@Param('id', ParseIntPipe) id: string) {
     return this.bookingService.cancel(id);
   }
 
   @Patch(':id/checkin')
-  checkIn(@Param('id', ParseIntPipe) id: number) {
+  checkIn(@Param('id', ParseIntPipe) id: string) {
     return this.bookingService.checkIn(id);
   }
 
   @Patch(':id/checkout')
-  checkOut(@Param('id', ParseIntPipe) id: number) {
+  checkOut(@Param('id', ParseIntPipe) id: string) {
     return this.bookingService.checkOut(id);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param('id', ParseIntPipe) id: string) {
     return this.bookingService.remove(id);
   }
 }

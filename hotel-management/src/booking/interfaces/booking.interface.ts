@@ -1,7 +1,7 @@
 export interface Booking {
-  id: number;
-  userId: number;
-  roomId: number;
+  id: string;
+  userId: string;
+  roomId: string;
   checkInDate: Date;
   checkOutDate: Date;
   totalAmount: number;
@@ -10,16 +10,16 @@ export interface Booking {
   createdAt: Date;
   updatedAt: Date;
   user?: {
-    id: number;
+    id: string;
     name: string;
     email: string;
   };
   room?: {
-    id: number;
+    id: string;
     roomNumber: string;
     floor: number;
     roomType: {
-      id: number;
+      id: string;
       name: string;
       basePrice: number;
     };

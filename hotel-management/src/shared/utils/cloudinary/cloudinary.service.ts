@@ -402,7 +402,7 @@ export class CloudinaryService {
    */
   async uploadUserProfileImage(
     file: Express.Multer.File,
-    userId: number,
+    userId: string,
     oldImageUrl?: string,
   ): Promise<CloudinaryUploadResult> {
     try {

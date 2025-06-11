@@ -67,7 +67,7 @@ export class RoomTypeController {
   @Get(':id')
   @UseGuards(PermissionGuard)
   @RequirePermissions(Permission.READ_ROOM_TYPE)
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id', ParseIntPipe) id: string) {
     return this.roomTypeService.findOne(id);
   }
 
@@ -75,7 +75,7 @@ export class RoomTypeController {
   @UseGuards(PermissionGuard)
   @RequirePermissions(Permission.UPDATE_ROOM_TYPE)
   update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) id: string,
     @Body() updateRoomTypeDto: UpdateRoomTypeDto,
   ) {
     return this.roomTypeService.update(id, updateRoomTypeDto);
@@ -85,7 +85,7 @@ export class RoomTypeController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(PermissionGuard)
   @RequirePermissions(Permission.DELETE_ROOM_TYPE)
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param('id', ParseIntPipe) id: string) {
     return this.roomTypeService.remove(id);
   }
 }

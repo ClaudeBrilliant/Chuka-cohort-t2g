@@ -29,4 +29,16 @@ Content-Type: application/json
     "roomNumber": 500
 }
 
+### UPLOAD USER PROFILE IMAGE
+POST {{baseUrl}}/users/37eeea7a-2915-450c-a29f-9e612a8803aa/profile-image
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzN2VlZWE3YS0yOTE1LTQ1MGMtYTI5Zi05ZTYxMmE4ODAzYWEiLCJlbWFpbCI6ImpvaG4uZG9lQGV4YW1wbGUuY29tIiwicm9sZSI6IkdVRVNUIiwiaWF0IjoxNzQ5NjMxNjA2LCJleHAiOjE3NDk3MTgwMDZ9.iEnTwxQcr4fgatkM2jp7iyEb5G8sGzAUB0WQ2I8drcw
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="profile.jpg"
+Content-Type: image/jpeg
+
+< /home/user/Downloads/porsche.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
 

@@ -76,7 +76,7 @@ export class RoomsService {
    * @param id Room ID
    * @returns Room
    */
-  async findOne(id: number): Promise<Room> {
+  async findOne(id: string): Promise<Room> {
     try {
       const room = await this.prisma.room.findUnique({
         where: { id },
@@ -153,7 +153,7 @@ export class RoomsService {
    * @param data UpdateRoomDto
    * @returns Room
    */
-  async update(id: number, data: UpdateRoomDto): Promise<Room> {
+  async update(id: string, data: UpdateRoomDto): Promise<Room> {
     try {
       const existingRoom = await this.prisma.room.findUnique({
         where: { id },
@@ -212,7 +212,7 @@ export class RoomsService {
    * @param id Room ID
    * @returns Success message
    */
-  async remove(id: number): Promise<{ message: string }> {
+  async remove(id: string): Promise<{ message: string }> {
     try {
       const room = await this.prisma.room.findUnique({
         where: { id },
@@ -350,7 +350,7 @@ export class RoomsService {
    * @param roomTypeId Room type ID
    * @returns Rooms of specified type
    */
-  async findByRoomType(roomTypeId: number): Promise<Room[]> {
+  async findByRoomType(roomTypeId: string): Promise<Room[]> {
     try {
       return await this.prisma.room.findMany({
         where: { roomTypeId },
@@ -393,7 +393,7 @@ export class RoomsService {
    * @param id Room ID
    * @returns Updated room
    */
-  async markAsCleaned(id: number): Promise<Room> {
+  async markAsCleaned(id: string): Promise<Room> {
     try {
       const room = await this.prisma.room.findUnique({
         where: { id },
@@ -427,7 +427,7 @@ export class RoomsService {
    * @param isAvailable Availability status
    * @returns Updated room
    */
-  async setAvailability(id: number, isAvailable: boolean): Promise<Room> {
+  async setAvailability(id: string, isAvailable: boolean): Promise<Room> {
     try {
       const room = await this.prisma.room.findUnique({
         where: { id },

@@ -7,7 +7,7 @@ import * as jwt from 'jsonwebtoken';
 import { UserRole } from 'generated/prisma';
 
 export interface JwtPayload {
-  sub: number;
+  sub: string;
   email: string;
   role: UserRole;
   iat?: number;

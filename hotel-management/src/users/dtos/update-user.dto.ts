@@ -12,6 +12,7 @@ import {
   MinLength,
   MaxLength,
   IsPhoneNumber,
+  IsUrl,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { UserRole } from 'generated/prisma';
@@ -61,4 +62,8 @@ export class UpdateUserDto {
   @IsOptional()
   @IsBoolean({ message: 'Active status must be a boolean' })
   isActive?: boolean;
+
+  @IsOptional()
+  @IsUrl({}, { message: 'Profile image must be a valid URL' })
+  profileImage?: string;
 }

@@ -1,7 +1,7 @@
 import { UserRole } from 'generated/prisma';
 
 export interface JwtPayload {
-  sub: number;
+  sub: string;
   email: string;
   role: UserRole;
   iat?: number;
@@ -11,9 +11,10 @@ export interface JwtPayload {
 export interface AuthResponse {
   access_token: string;
   user: {
-    id: number;
+    id: string;
     name: string;
     email: string;
     role: UserRole;
+    profileImage?: string;
   };
 }

@@ -7,8 +7,8 @@ POST {{baseUrl}}/auth/register
 Content-Type: {{contentType}}
 
 {
-  "name": "John Doe",
-  "email": "john.doe@example.com",
+  "name": "Jimmy Kimunyi",
+  "email": "jkkimunyi@gmail.com",
   "password": "Password123!",
   "phone": "+1234567890",
   "role": "GUEST"

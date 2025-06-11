@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import {
   Injectable,
   UnauthorizedException,
@@ -11,12 +12,14 @@ import { RegisterDto } from './dtos/register.dto';
 import { AuthResponse, JwtPayload } from './interfaces/auth.interface';
 import * as bcrypt from 'bcryptjs';
 import { UserRole } from 'generated/prisma';
+import { MailerService } from 'src/shared/utils/mailer/mailer.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
+    private mailerService: MailerService,
   ) {}
 
   async register(registerDto: RegisterDto): Promise<AuthResponse> {
@@ -47,6 +50,18 @@ export class AuthService {
         checkOutDate: undefined,
         roomNumber: undefined,
       });
+
+      try {
+        await this.mailerService.sendWelcomeEmail(user.email, {
+          name: user.name,
+          email: user.email,
+        });
+      } catch (emailError) {
+        console.warn(
+          `Failed to send welcome email to ${user.email}:`,
+          emailError.message,
+        );
+      }
 
       // Generate JWT token
       const payload: JwtPayload = {

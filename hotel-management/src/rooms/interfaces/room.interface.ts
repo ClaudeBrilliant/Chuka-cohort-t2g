@@ -1,11 +1,11 @@
 export interface Room {
-  id: number;
+  id: string;
   roomNumber: string;
   floor: number;
   isAvailable: boolean;
   isClean: boolean;
   lastCleaned: Date | null;
-  roomTypeId: number;
+  roomTypeId: string;
   createdAt: Date;
   updatedAt: Date;
 }

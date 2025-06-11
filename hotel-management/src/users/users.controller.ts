@@ -12,7 +12,9 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dtos/create-user.dto';
@@ -34,6 +36,7 @@ import { Permission } from '../auth/enums/permissions.enum';
 import { Action } from '../auth/enums/actions.enum';
 import { Resource } from '../auth/enums/resources.enum';
 import { UserRole } from 'generated/prisma';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard)
@@ -115,7 +118,7 @@ export class UsersController {
   @RequireResourceAction(Action.READ, Resource.USER)
   @CheckResourceOwner('id')
   async findOne(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) id: string,
   ): Promise<ApiResponse<User>> {
     try {
       const user = await this.usersService.findOne(id);
@@ -139,7 +142,7 @@ export class UsersController {
   @RequireResourceAction(Action.UPDATE, Resource.USER)
   @CheckResourceOwner('id')
   async update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) id: string,
     @Body() data: UpdateUserDto,
     @CurrentUser() currentUser: CurrentUserData,
   ): Promise<ApiResponse<User>> {
@@ -165,11 +168,34 @@ export class UsersController {
     }
   }
 
+  @Post(':id/profile-image')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadProfileImage(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<ApiResponse<User>> {
+    try {
+      const user = await this.usersService.uploadProfileImage(id, file);
+      const { password, ...userWithoutPassword } = user;
+      return {
+        sucess: true,
+        message: ' Profile image uploaded sucessfully',
+        data: user,
+      };
+    } catch (error) {
+      return {
+        sucess: false,
+        message: 'Failed to upload image',
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
+    }
+  }
+
   @Delete(':id')
   @UseGuards(PermissionGuard)
   @RequirePermissions(Permission.DELETE_USER)
   async remove(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) id: string,
   ): Promise<ApiResponse<null>> {
     try {
       const result = await this.usersService.remove(id);
