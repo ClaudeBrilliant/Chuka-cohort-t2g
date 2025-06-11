@@ -15,7 +15,7 @@ import {
 import { AuthService } from './auth.service';
 import { LoginDto } from './dtos/login.dto';
 import { RegisterDto } from './dtos/register.dto';
-import { JwtAuthGuard } from './jwt/jwt.guard';
+import { JwtAuthGuard } from './guards/jwt/jwt.guard';
 import {
   CurrentUser,
   CurrentUserData,

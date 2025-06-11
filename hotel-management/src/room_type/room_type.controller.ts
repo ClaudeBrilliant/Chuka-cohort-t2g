@@ -11,22 +11,32 @@ import {
   HttpCode,
   HttpStatus,
   ParseFloatPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { RoomTypeService } from './room_type.service';
 import { CreateRoomTypeDto } from './dtos/create-room-type.dto';
 import { UpdateRoomTypeDto } from './dtos/update-room-type.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt/jwt.guard';
+import { PermissionGuard } from '../auth/guards/permission/permission.guard';
+import { RequirePermissions } from '../auth/decorators/permissions.decorator';
+import { Permission } from '../auth/enums/permissions.enum';
 
 @Controller('room-type')
+@UseGuards(JwtAuthGuard)
 export class RoomTypeController {
   constructor(private readonly roomTypeService: RoomTypeService) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @UseGuards(PermissionGuard)
+  @RequirePermissions(Permission.CREATE_ROOM_TYPE)
   create(@Body() createRoomTypeDto: CreateRoomTypeDto) {
     return this.roomTypeService.create(createRoomTypeDto);
   }
 
   @Get()
+  @UseGuards(PermissionGuard)
+  @RequirePermissions(Permission.READ_ALL_ROOM_TYPES)
   findAll() {
     return this.roomTypeService.findAll();
   }
@@ -55,11 +65,15 @@ export class RoomTypeController {
   }
 
   @Get(':id')
+  @UseGuards(PermissionGuard)
+  @RequirePermissions(Permission.READ_ROOM_TYPE)
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.roomTypeService.findOne(id);
   }
 
   @Patch(':id')
+  @UseGuards(PermissionGuard)
+  @RequirePermissions(Permission.UPDATE_ROOM_TYPE)
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateRoomTypeDto: UpdateRoomTypeDto,
@@ -69,6 +83,8 @@ export class RoomTypeController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
+  @UseGuards(PermissionGuard)
+  @RequirePermissions(Permission.DELETE_ROOM_TYPE)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.roomTypeService.remove(id);
   }

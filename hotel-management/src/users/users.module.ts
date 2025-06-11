@@ -4,11 +4,12 @@ import { UsersService } from './users.service';
 import { DatabaseService } from 'src/database/connection.service';
 import { JwtService } from '../shared/utils/jwt.service';
 import { ConfigModule } from '@nestjs/config';
+import { PermissionService } from 'src/auth/services/permission.service';
 
 @Module({
   imports: [ConfigModule],
   controllers: [UsersController],
-  providers: [UsersService, DatabaseService, JwtService],
+  providers: [UsersService, DatabaseService, JwtService, PermissionService],
   exports: [UsersService],
 })
 export class UsersModule {}

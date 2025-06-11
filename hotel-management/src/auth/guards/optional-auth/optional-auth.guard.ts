@@ -1,7 +1,7 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Request } from 'express';
-import { JwtService } from '../../shared/utils/jwt.service';
-import { UsersService } from '../../users/users.service';
+import { JwtService } from '../../../shared/utils/jwt.service';
+import { UsersService } from '../../../users/users.service';
 
 @Injectable()
 export class OptionalAuthGuard implements CanActivate {

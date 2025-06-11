@@ -4,25 +4,38 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UsersModule } from '../users/users.module';
 import { JwtService } from '../shared/utils/jwt.service';
-import { JwtAuthGuard } from './jwt/jwt.guard';
-import { RolesGuard } from './roles/roles.guard';
-import { OptionalAuthGuard } from './optional-auth/optional-auth.guard';
+import { JwtAuthGuard } from './guards/jwt/jwt.guard';
+import { RolesGuard } from './guards/roles/roles.guard';
+import { PermissionGuard } from './guards/permission/permission.guard';
+import { ResourceActionGuard } from './guards/resource-action/resource-action.guard';
+import { ResourceOwnerGuard } from './guards/resource-owner/resource-owner.guard';
+import { OptionalAuthGuard } from './guards/optional-auth/optional-auth.guard';
+import { PermissionService } from './services/permission.service';
+import { PermissionController } from './controllers/permission.controller';
 
 @Module({
   imports: [ConfigModule, UsersModule],
   providers: [
     AuthService,
     JwtService,
+    PermissionService,
     JwtAuthGuard,
     RolesGuard,
+    PermissionGuard,
+    ResourceActionGuard,
+    ResourceOwnerGuard,
     OptionalAuthGuard,
   ],
-  controllers: [AuthController],
+  controllers: [AuthController, PermissionController],
   exports: [
     AuthService,
     JwtService,
+    PermissionService,
     JwtAuthGuard,
     RolesGuard,
+    PermissionGuard,
+    ResourceActionGuard,
+    ResourceOwnerGuard,
     OptionalAuthGuard,
   ],
 })
