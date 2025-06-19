@@ -1,0 +1,59 @@
+<!-- Navbar always shows -->
+<nav class="bg-white shadow-lg border-b border-gray-200">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="flex justify-between items-center h-16">
+      
+      <!-- Logo -->
+      <div class="flex items-center space-x-4">
+        <h1 class="text-2xl font-bold text-gray-800 cursor-pointer" 
+            (click)="navigateTo('/dashboard')">
+          🏨 The Grand Hotel
+        </h1>
+        <!-- <span class="text-sm text-gray-500">Day 4: Routing</span> -->
+      </div>
+
+      <!-- Navigation Links - YOUR COMPONENTS -->
+      <div class="hidden md:flex items-center space-x-1">
+        <button 
+          (click)="navigateTo('/login')"
+          [class.bg-blue-100]="isActiveRoute('/login')"
+          class="px-3 py-2 rounded-md text-sm hover:bg-gray-100 transition-colors">
+          🔐 Login
+        </button>
+        
+        <button 
+          (click)="navigateTo('/dashboard')"
+          [class.bg-blue-100]="isActiveRoute('/dashboard')"
+          class="px-3 py-2 rounded-md text-sm hover:bg-gray-100 transition-colors">
+          🏨 Dashboard
+        </button>
+        
+        <button 
+          (click)="navigateTo('/bookings')"
+          [class.bg-blue-100]="isActiveRoute('/bookings')"
+          class="px-3 py-2 rounded-md text-sm hover:bg-gray-100 transition-colors">
+          📋 Bookings
+        </button>
+        
+        <button 
+          (click)="navigateTo('/rooms')"
+          [class.bg-blue-100]="isActiveRoute('/rooms')"
+          class="px-3 py-2 rounded-md text-sm hover:bg-gray-100 transition-colors">
+          🛏️ Rooms
+        </button>
+        
+        <button 
+          (click)="navigateTo('/room/list')"
+          [class.bg-blue-100]="isActiveRoute('/room/list')"
+          class="px-3 py-2 rounded-md text-sm hover:bg-gray-100 transition-colors">
+          🏠 Room List
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Debug Info -->
+<div class="bg-yellow-50 p-2 text-xs">
+  Current Route: {{ currentRoute }} | Navigation working: {{ currentRoute !== '/' ? '✅' : '❌' }}
+</div>

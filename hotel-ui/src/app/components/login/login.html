@@ -1,0 +1,164 @@
+<div class="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-md w-full space-y-8">
+    
+    <!-- Header -->
+    <div class="text-center">
+      <h2 class="mt-6 text-3xl font-extrabold text-white">
+        {{ isLoginMode ? 'Sign in to Hotel Management' : 'Create your account' }}
+      </h2>
+      <p class="mt-2 text-sm text-blue-100">
+        {{ isLoginMode ? 'Welcome back!' : 'Join our hotel management system' }}
+      </p>
+    </div>
+
+    <!-- Routing Demo Info Panel -->
+    <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+      <h3 class="text-sm font-semibold text-white mb-2">Day 4 - Routing Demo</h3>
+      <div class="text-xs text-blue-100 space-y-1">
+        <p>• Route Guards protecting components</p>
+        <p>• Role-based access control</p>
+        <p>• Authentication state management</p>
+        <p>• Return URL preservation</p>
+      </div>
+    </div>
+
+    <!-- Auth Error Display -->
+    <div *ngIf="error" class="bg-red-500/20 border border-red-500 rounded-lg p-3">
+      <div class="flex items-center">
+        <svg class="h-5 w-5 text-red-300 mr-2" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"/>
+        </svg>
+        <p class="text-sm text-red-200">{{ error }}</p>
+      </div>
+    </div>
+
+    <!-- Main Form -->
+    <div class="bg-white rounded-lg shadow-xl p-8">
+      
+      <!-- Login Form -->
+      <form *ngIf="isLoginMode" (ngSubmit)="onLogin()" class="space-y-6">
+        <div>
+          <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
+          <input 
+            id="email"
+            name="email"
+            type="email"
+            autocomplete="email"
+            required
+            [(ngModel)]="loginData.email"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Enter your email">
+        </div>
+
+        <div>
+          <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+          <input 
+            id="password"
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            required
+            [(ngModel)]="loginData.password"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Enter your password">
+        </div>
+
+        <button 
+          type="submit"
+          [disabled]="isLoading || !isValidLoginForm()"
+          class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed">
+          <svg *ngIf="isLoading" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          {{ isLoading ? 'Signing in...' : 'Sign in' }}
+        </button>
+      </form>
+
+      <!-- Register Form -->
+      <form *ngIf="!isLoginMode" (ngSubmit)="onRegister()" class="space-y-6">
+        <div>
+          <label for="name" class="block text-sm font-medium text-gray-700">Full Name</label>
+          <input 
+            id="name"
+            name="name"
+            type="text"
+            required
+            [(ngModel)]="registerData.name"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Enter your full name">
+        </div>
+
+        <div>
+          <label for="register-email" class="block text-sm font-medium text-gray-700">Email address</label>
+          <input 
+            id="register-email"
+            name="email"
+            type="email"
+            autocomplete="email"
+            required
+            [(ngModel)]="registerData.email"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Enter your email">
+        </div>
+
+        <div>
+          <label for="register-password" class="block text-sm font-medium text-gray-700">Password</label>
+          <input 
+            id="register-password"
+            name="password"
+            type="password"
+            autocomplete="new-password"
+            required
+            [(ngModel)]="registerData.password"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Create a password">
+        </div>
+
+        <div>
+          <label for="role" class="block text-sm font-medium text-gray-700">Role</label>
+          <select 
+            id="role"
+            name="role"
+            [(ngModel)]="registerData.role"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+            <option value="GUEST">Guest</option>
+            <option value="STAFF">Staff</option>
+            <option value="ADMIN">Admin</option>
+          </select>
+        </div>
+
+        <button 
+          type="submit"
+          [disabled]="isLoading || !isValidRegisterForm()"
+          class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed">
+          <svg *ngIf="isLoading" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          {{ isLoading ? 'Creating account...' : 'Create account' }}
+        </button>
+      </form>
+
+      <!-- Mode Toggle -->
+      <div class="mt-6 text-center">
+        <p class="text-sm text-gray-600">
+          {{ isLoginMode ? 'Don\'t have an account?' : 'Already have an account?' }}
+          <button 
+            type="button"
+            (click)="toggleMode()"
+            class="font-medium text-blue-600 hover:text-blue-500 ml-1">
+            {{ isLoginMode ? 'Sign up' : 'Sign in' }}
+          </button>
+        </p>
+      </div>
+    </div>
+
+    <!-- Route Info for Training -->
+    <div class="text-center">
+      <p class="text-xs text-blue-200">
+        Return URL: <span class="font-mono">{{ returnUrl }}</span>
+      </p>
+    </div>
+  </div>
+</div>

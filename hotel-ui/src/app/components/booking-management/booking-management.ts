@@ -5,7 +5,7 @@ import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 
-import { BookingService, BookingResponse, PaginatedResponse } from '../services/booking';
+import { BookingService, BookingResponse, PaginatedResponse } from '../../services/booking';
 
 @Component({
   selector: 'app-booking-management',
@@ -14,7 +14,7 @@ import { BookingService, BookingResponse, PaginatedResponse } from '../services/
   templateUrl: './booking-management.html',
   styleUrl: './booking-management.css'
 })
-export class BookingManagementComponent implements OnInit, OnDestroy {
+export class BookingManagement implements OnInit, OnDestroy {
   // Component state
   bookings: BookingResponse[] = [];
   todaysCheckIns: BookingResponse[] = [];
