@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
@@ -10,11 +10,15 @@ import { BookingService, BookingResponse, PaginatedResponse } from '../../servic
 @Component({
   selector: 'app-booking-management',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './booking-management.html',
   styleUrl: './booking-management.css'
 })
 export class BookingManagement implements OnInit, OnDestroy {
+  // Reactive form properties
+  bookingForm!: FormGroup;
+  showNewBookingForm = false;
+
   // Component state
   bookings: BookingResponse[] = [];
   todaysCheckIns: BookingResponse[] = [];
@@ -50,7 +54,8 @@ export class BookingManagement implements OnInit, OnDestroy {
     { value: 'cancelled', label: 'Cancelled' }
   ];
 
-  constructor(private bookingService: BookingService) {
+  constructor(private bookingService: BookingService, private fb: FormBuilder) {
+
     console.log('BookingManagement Constructor: Component instantiated');
     console.log('Constructor: BookingService injected via DI');
   }
@@ -67,6 +72,8 @@ export class BookingManagement implements OnInit, OnDestroy {
     this.setupDebouncedSearch();
     
     console.log('OnInit: All HTTP subscriptions configured');
+
+    this.createBookingForm();
   }
 
   // OnDestroy - HTTP subscription cleanup
@@ -82,6 +89,13 @@ export class BookingManagement implements OnInit, OnDestroy {
     console.log('OnDestroy: All HTTP subscriptions cleaned up');
   }
 
+
+  toggleNewBookingForm(): void {
+    this.showNewBookingForm = !this.showNewBookingForm;
+    if(this.showNewBookingForm){
+      this.bookingForm.reset({guests: 1})
+    }
+  }
   // HTTP Client data loading methods
   private loadBookings(): void {
     this.isLoading = true;
@@ -353,5 +367,67 @@ export class BookingManagement implements OnInit, OnDestroy {
 
   getTotalPages(): number {
     return Math.ceil(this.totalBookings / 10);
+  }
+
+
+  private createBookingForm(): void{
+    this.bookingForm = this.fb.group ({
+      guestName: ['', [Validators.required, Validators.minLength(6)]],
+      email: ['', [Validators.required, Validators.email]],
+      phone: ['', [Validators.required, this.phoneValidator ]],
+
+      checkIn: ['', [Validators.required, this.futureDateValidator]],
+      checkOut: ['', [Validators.required]],
+      roomType: ['', [Validators.required]],
+      guests: [1, [Validators.required, Validators.min(1), Validators.max(4)]]
+    }, {validators: this.dateRangeValidator})
+  }
+
+  private phoneValidator(control: AbstractControl) {
+    const phone = control.value;
+
+    return phone && phone.length >= 10 ? null : {invalidPhone: true}
+  }
+
+  private futureDateValidator(control: AbstractControl) {
+    const date = new Date(control.value);
+    return date > new Date() ? null : {pastDate: true}
+  }
+
+  private dateRangeValidator(form: AbstractControl) {
+    const checkIn = form.get('checkIn')?.value;
+    const checkOut = form.get('checkOut')?.value;
+
+    return checkIn && checkOut && new Date(checkOut) <= new Date(checkIn) ? {invalidDateRange: true} : null
+  }
+
+  getFieldError(fieldName: string): string | null {
+    const field = this.bookingForm.get(fieldName);
+    if(field?.errors && field.touched) {
+      if(field.errors['minlength']) return 'Too short';
+      if(field.errors['required']) return 'This field is required';
+      if(field.errors['email']) return ' Invalid email format';
+      if(field.errors['invalidPhone']) return 'Phone number must be atleast 10 digits';
+      if(field.errors['pastDate']) return ' Date must be in the future';
+      if(field.errors['min']) return ' Minimum of 1 guest';
+      if(field.errors['max']) return ' Max of 4 guests'
+    }
+    return null;
+  }
+
+  private markFormGroupTouched(): void {
+    Object.keys(this.bookingForm.controls).forEach(key =>{this.bookingForm.controls[key].markAsTouched()})
+  }
+
+  onSubmitNewBooking(): void {
+    if(this.bookingForm.valid){
+      console.log('New Booking', this.bookingForm.value);
+
+      this.showNewBookingForm = false;
+      this.bookingForm.reset({guests:1});
+      
+    } else {
+      this.markFormGroupTouched();
+    }
   }
 }

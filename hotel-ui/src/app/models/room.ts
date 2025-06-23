@@ -8,4 +8,7 @@ export interface Room {
     amenities: string[];
     rating: number;
     description:string;
+    status?: string;
+    number?:string;
+    guest?: string;
 }
