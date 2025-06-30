@@ -1,101 +1,182 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { trigger, state, style, transition, animate, query, stagger } from '@angular/animations';
 import { Room } from '../../models/room';
 import { Booking } from '../../models/booking';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-room-list',
-  imports: [FormsModule, CommonModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './room-list.html',
   styleUrl: './room-list.css',
+  animations: [
+    // 1. Room Availability Animation (State-based)
+    trigger('roomAvailability', [
+      state('available', style({
+        backgroundColor: '#f0fdf4',
+        borderColor: '#22c55e',
+        transform: 'scale(1)'
+      })),
+      state('booked', style({
+        backgroundColor: '#fef2f2',
+        borderColor: '#ef4444',
+        transform: 'scale(0.98)'
+      })),
+      transition('available <=> booked', [
+        animate('300ms ease-in-out')
+      ])
+    ]),
+
+    // 2. Room Booking Process Animation (Multi-step)
+    trigger('bookingProcess', [
+      state('selecting', style({
+        transform: 'translateY(0)',
+        opacity: 1
+      })),
+      state('booking', style({
+        transform: 'translateY(-10px)',
+        opacity: 0.8,
+        backgroundColor: '#fef3c7'
+      })),
+      state('confirmed', style({
+        transform: 'scale(1.05)',
+        backgroundColor: '#d1fae5',
+        boxShadow: '0 10px 25px rgba(34, 197, 94, 0.3)'
+      })),
+      transition('selecting => booking', animate('200ms ease-out')),
+      transition('booking => confirmed', animate('400ms ease-in')),
+      transition('confirmed => selecting', animate('300ms ease-out'))
+    ]),
+
+    // 3. Room Cards Entrance Animation (List animation)
+    trigger('roomsEnter', [
+      transition('* => *', [
+        query(':enter', [
+          style({ opacity: 0, transform: 'translateY(30px)' }),
+          stagger(100, [
+            animate('500ms ease-out', style({ 
+              opacity: 1, 
+              transform: 'translateY(0)' 
+            }))
+          ])
+        ], { optional: true })
+      ])
+    ]),
+
+    // 4. Price Change Animation (Hotel pricing updates)
+    trigger('priceUpdate', [
+      transition(':increment', [
+        style({ color: '#ef4444', transform: 'scale(1.1)' }),
+        animate('600ms ease-out', style({ color: '*', transform: 'scale(1)' }))
+      ]),
+      transition(':decrement', [
+        style({ color: '#22c55e', transform: 'scale(1.1)' }),
+        animate('600ms ease-out', style({ color: '*', transform: 'scale(1)' }))
+      ])
+    ])
+  ]
 })
-export class RoomList {
+export class RoomList{
   showAvailableOnly = false;
   selectedView = 'grid';
   sortBy = 'name';
+  
   rooms: Room[] = [
     {
       id: '1',
-      name: 'Beach Front View',
-      type: 'En Suite',
-      price: 25000,
+      name: 'Ocean Breeze Suite',
+      type: 'Suite',
+      price: 450,
       available: true,
-      image:
-        'https://thumbs.dreamstime.com/b/beach-front-holiday-view-africa-use-as-background-image-beach-front-holiday-view-africa-155608942.jpg',
-      amenities: ['WiFi', 'Air Conditioning', 'Mini Bar', 'Ocean View'],
-      rating: 4.5,
-      description:
-        'Clean Self contained room with a view of the expansive ocean',
+      image: 'https://via.placeholder.com/400x300',
+      amenities: ['Ocean View', 'Balcony', 'Mini Bar', 'WiFi', 'Room Service'],
+      rating: 4.9,
+      description: 'Luxurious suite with panoramic ocean views'
     },
     {
       id: '2',
-      name: 'Presidential Suite',
-      type: 'Master En Suite',
-      price: 45000,
-      available: true,
-      image: 'image.jpeg',
-      amenities: [
-        'WiFi',
-        'Air Conditioning',
-        'Mini Bar',
-        'Ocean View',
-        'Room Service',
-        'Personal Pool',
-      ],
-      rating: 4.5,
-      description:
-        'Clean Self contained luxurious room with a view of the expansive ocean',
+      name: 'Garden Villa',
+      type: 'Villa',
+      price: 320,
+      available: false,
+      image: 'https://via.placeholder.com/400x300',
+      amenities: ['Garden View', 'Private Patio', 'Kitchenette', 'WiFi'],
+      rating: 4.7,
+      description: 'Peaceful villa surrounded by gardens'
     },
     {
       id: '3',
-      name: 'Standard Room',
-      type: 'Suite',
-      price: 20000,
+      name: 'City Center Standard',
+      type: 'Standard',
+      price: 180,
       available: true,
-      image: 'image.jpeg',
-      amenities: ['WiFi', 'Air Conditioning', 'Mini Bar'],
-      rating: 4.5,
-      description:
-        'Clean Self contained standard room with a view of the expansive ocean',
+      image: 'https://via.placeholder.com/400x300',
+      amenities: ['City View', 'WiFi', 'TV', 'Air Conditioning'],
+      rating: 4.3,
+      description: 'Modern room in the heart of the city'
     },
+    {
+      id: '4',
+      name: 'Penthouse Royal',
+      type: 'Penthouse',
+      price: 800,
+      available: true,
+      image: 'https://via.placeholder.com/400x300',
+      amenities: ['360° View', 'Private Elevator', 'Butler Service', 'Jacuzzi', 'Wine Cellar'],
+      rating: 5.0,
+      description: 'Ultimate luxury penthouse experience'
+    }
   ];
 
   bookings: Booking[] = [
     {
       id: '1',
-      guestName: 'Claude Nyongesa',
-      roomId: '1',
-      checkIn: '2025-06-22',
-      checkOut: '2025-06-29',
-      guests: 3,
+      guestName: 'John Doe',
+      roomId: '2',
+      checkIn: '2025-06-20',
+      checkOut: '2025-06-25',
+      guests: 2,
       status: 'confirmed',
-      totalAmount: 16000,
+      totalAmount: 1600
     },
-     {
+    {
       id: '2',
-      guestName: 'Duncan Ochieng',
-      roomId: '4',
-      checkIn: '2025-06-25',
-      checkOut: '2025-06-30',
-      guests: 3,
+      guestName: 'Jane Smith',
+      roomId: '1',
+      checkIn: '2025-06-18',
+      checkOut: '2025-06-22',
+      guests: 1,
       status: 'pending',
-      totalAmount: 29000,
-    },
+      totalAmount: 1800
+    }
   ];
 
   viewOptions = [
-    {value: 'grid', label: 'Grid View'},
-    {value: 'list', label: 'List View'},
-    {value: 'table', label: 'Table View'}
+    { value: 'grid', label: 'Grid View' },
+    { value: 'list', label: 'List View' },
+    { value: 'table', label: 'Table View' }
   ];
 
   sortOptions = [
-    {value: 'name', label: 'Name'},
-    {value: 'price', label: "Price"},
-    {value: 'rating', label: 'Rating'},
-    {value: 'type', label: 'Type'}
+    { value: 'name', label: 'Name' },
+    { value: 'price', label: 'Price' },
+    { value: 'rating', label: 'Rating' },
+    { value: 'type', label: 'Type' }
   ];
+
+  // Animation state properties
+  roomAnimationStates: { [key: string]: string } = {};
+  bookingStates: { [key: string]: 'selecting' | 'booking' | 'confirmed' } = {};
+  
+  constructor() {
+    // Initialize animation states
+    this.rooms.forEach(room => {
+      this.roomAnimationStates[room.id] = room.available ? 'available' : 'booked';
+      this.bookingStates[room.id] = 'selecting';
+    });
+  }
 
   getFilteredRooms(): Room[] {
     let filtered = this.rooms;
@@ -108,13 +189,13 @@ export class RoomList {
     filtered.sort((a, b) => {
       switch (this.sortBy) {
         case 'price':
-          return a.price - b.price;
+          return (a.price || 0) - (b.price || 0);
         case 'rating':
-          return b.rating - a.rating;
+          return (b.rating || 0) - (a.rating || 0);
         case 'type':
-          return a.type.localeCompare(b.type);
+          return (a.type || '').localeCompare(b.type || '');
         default:
-          return a.name.localeCompare(b.name);
+          return (a.name || '').localeCompare(b.name || '');
       }
     });
     
@@ -158,5 +239,47 @@ export class RoomList {
 
   getBookingForRoom(roomId: string): Booking | undefined {
     return this.bookings.find(booking => booking.roomId === roomId);
+  }
+
+  // Animation Demo Methods
+  toggleRoomAvailability(roomId: string): void {
+    const room = this.rooms.find(r => r.id === roomId);
+    if (room) {
+      room.available = !room.available;
+      this.roomAnimationStates[roomId] = room.available ? 'available' : 'booked';
+      console.log('🎬 Room availability animation triggered');
+    }
+  }
+
+  simulateBooking(roomId: string): void {
+    console.log('🎬 Booking process animation started');
+    
+    // Step 1: Booking state
+    this.bookingStates[roomId] = 'booking';
+    
+    // Step 2: Confirmed state after delay
+    setTimeout(() => {
+      this.bookingStates[roomId] = 'confirmed';
+      
+      // Step 3: Reset after showing confirmation
+      setTimeout(() => {
+        this.bookingStates[roomId] = 'selecting';
+        this.toggleRoomAvailability(roomId); // Make it unavailable
+      }, 2000);
+    }, 1000);
+  }
+
+  updateRoomPrice(roomId: string, increase: boolean): void {
+    const room = this.rooms.find(r => r.id === roomId);
+    if (room && room.price) {
+      const oldPrice = room.price;
+      room.price = increase ? room.price + 50 : Math.max(100, room.price - 50);
+      console.log('🎬 Price animation:', oldPrice, '->', room.price);
+    }
+  }
+
+  // Animation event handlers
+  onAnimationDone(event: any, roomId: number): void {
+    console.log('🎬 Animation completed:', event.triggerName, 'for room', roomId);
   }
 }
