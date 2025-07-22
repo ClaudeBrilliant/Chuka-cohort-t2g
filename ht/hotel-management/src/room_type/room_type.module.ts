@@ -5,7 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from 'src/shared/utils/jwt.service';
 import { UsersService } from 'src/users/users.service';
 import { PermissionService } from 'src/auth/services/permission.service';
-import { DatabaseService } from 'src/database/connection.service';
+// import { DatabaseService } from 'src/database/connection.service';
 import { CloudinaryService } from 'src/shared/utils/cloudinary/cloudinary.service';
 
 @Module({
@@ -15,7 +15,6 @@ import { CloudinaryService } from 'src/shared/utils/cloudinary/cloudinary.servic
     ConfigService,
     UsersService,
     PermissionService,
-    DatabaseService,
     CloudinaryService,
   ],
   controllers: [RoomTypeController],
