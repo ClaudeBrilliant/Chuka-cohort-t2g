@@ -1,0 +1,22 @@
+{
+  "name": "auth-app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "concurrently \"tsc --watch\" \"npx http-server -p 8080 -c-1\"",
+    "serve": "npx http-server -p 8080 -c-1",
+    "start": "npm run build && npm run serve",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "login/signup",
+  "dependencies": {
+    "typescript": "^5.8.3"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "concurrently": "^7.6.0"
+  }
+}

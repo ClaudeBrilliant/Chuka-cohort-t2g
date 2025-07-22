@@ -1,0 +1,44 @@
+@baseUrl = http://localhost:3000
+
+### CREATE A NEW USER
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "name": "Harrison Njoroge",
+    "email": "harrison.njoroge@gmail.com",
+    "phone": "+25471231568"
+}
+
+### GET All Users
+GET http://localhost:3000/users
+
+### Get all active users
+GET http://localhost:3000/users?active=true
+
+### GET user by email
+GET {{baseUrl}}/users/email/mark.otwane@gmail.com
+
+### UPDATE user data
+PATCH {{baseUrl}}/users/3
+Content-Type: application/json
+
+{
+    "checkInDate": "2025-06-06",
+    "checkOutDate": "2025-06-25",
+    "roomNumber": 500
+}
+
+### UPLOAD USER PROFILE IMAGE
+POST {{baseUrl}}/users/37eeea7a-2915-450c-a29f-9e612a8803aa/profile-image
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzN2VlZWE3YS0yOTE1LTQ1MGMtYTI5Zi05ZTYxMmE4ODAzYWEiLCJlbWFpbCI6ImpvaG4uZG9lQGV4YW1wbGUuY29tIiwicm9sZSI6IkdVRVNUIiwiaWF0IjoxNzQ5NjMxNjA2LCJleHAiOjE3NDk3MTgwMDZ9.iEnTwxQcr4fgatkM2jp7iyEb5G8sGzAUB0WQ2I8drcw
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="profile.jpg"
+Content-Type: image/jpeg
+
+< /home/user/Downloads/porsche.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+

@@ -1,0 +1,79 @@
+### Variables
+@baseUrl = http://localhost:3000
+@contentType = application/json
+
+### 1. Register a new user (Guest)
+POST {{baseUrl}}/auth/register
+Content-Type: {{contentType}}
+
+{
+  "name": "Alex Muhoro",
+  "email": "Kingstonmuhoro@gmail.com",
+  "password": "Password123!",
+  "phone": "+25454569890",
+  "role": "GUEST"
+}
+
+### 2. Register a new admin user
+POST {{baseUrl}}/auth/register
+Content-Type: {{contentType}}
+
+{
+  "name": "Admin User",
+  "email": "admin@hotel.com",
+  "password": "AdminPass123!",
+  "phone": "+1987654321",
+  "role": "ADMIN"
+}
+
+### 3. Register a staff user
+POST {{baseUrl}}/auth/register
+Content-Type: {{contentType}}
+
+{
+  "name": "Staff Member",
+  "email": "staff@hotel.com",
+  "password": "StaffPass123!",
+  "phone": "+1122334455",
+  "role": "STAFF"
+}
+
+### 4. Login with guest credentials
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "john.doe@example.com",
+  "password": "Password123!"
+}
+
+### 5. Login with admin credentials
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "admin@hotel.com",
+  "password": "AdminPass123!"
+}
+
+### 6. Login with staff credentials
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "staff@hotel.com",
+  "password": "StaffPass123!"
+}
+
+### 7. Get user profile (requires authentication)
+# Replace YOUR_JWT_TOKEN with actual token from login response
+GET {{baseUrl}}/auth/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjYsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJyb2xlIjoiR1VFU1QiLCJpYXQiOjE3NDk1ODg3MDMsImV4cCI6MTc0OTY3NTEwM30.l5JxtFhkAtp4kTQAErBb0KcCffNz-6agenNnYMrX_6k
+
+### 8. Validate token
+POST {{baseUrl}}/auth/validate
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjYsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJyb2xlIjoiR1VFU1QiLCJpYXQiOjE3NDk1ODg3MDMsImV4cCI6MTc0OTY3NTEwM30.l5JxtFhkAtp4kTQAErBb0KcCffNz-6agenNnYMrX_6k
+
+### 9. Refresh token
+POST {{baseUrl}}/auth/refresh
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjYsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJyb2xlIjoiR1VFU1QiLCJpYXQiOjE3NDk1ODg3MDMsImV4cCI6MTc0OTY3NTEwM30.l5JxtFhkAtp4kTQAErBb0KcCffNz-6agenNnYMrX_6k
