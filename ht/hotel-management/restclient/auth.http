@@ -1,5 +1,5 @@
 ### Variables
-@baseUrl = http://localhost:3000
+@baseUrl = https://4z68n3w2-3000.uks1.devtunnels.ms
 @contentType = application/json
 
 ### 1. Register a new user (Guest)
@@ -7,8 +7,8 @@ POST {{baseUrl}}/auth/register
 Content-Type: {{contentType}}
 
 {
-  "name": "Alex Muhoro",
-  "email": "Kingstonmuhoro@gmail.com",
+  "name": "tester 1",
+  "email": "earljoe06@outlook.com",
   "password": "Password123!",
   "phone": "+25454569890",
   "role": "GUEST"
